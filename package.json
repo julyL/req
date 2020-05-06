@@ -1,0 +1,33 @@
+{
+  "name": "req",
+  "version": "1.0.0",
+  "description": "> 基于axios进行扩展",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julyL/req.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julyL/req/issues"
+  },
+  "homepage": "https://github.com/julyL/req#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-alloy": "^3.7.1",
+    "koa": "^2.11.0",
+    "koa-router": "^8.0.8",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1"
+  }
+}
