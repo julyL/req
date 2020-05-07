@@ -4,7 +4,8 @@
   "description": "> 基于axios进行扩展",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./test/server.js",
+    "test": "nodemon ./test/index.js"
   },
   "repository": {
     "type": "git",

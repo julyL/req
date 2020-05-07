@@ -9,10 +9,12 @@ router.get('/test', async (ctx, next) => {
 });
 
 router.get('/a', async (ctx, next) => {
+  console.log(ctx.req.url);
   ctx.body = 'aaa';
 });
 
 router.get('/b', async (ctx, next) => {
+  console.log(ctx.req.url);
   ctx.body = 'bbb';
 });
 
