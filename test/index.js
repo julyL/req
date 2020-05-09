@@ -1,17 +1,23 @@
 const Request = require('../lib/core/index');
-const { useDebounce } = require('../lib/interceptors');
+const { useDebounce, useThrottle } = require('../lib/interceptors');
+const debounce = require('lodash.debounce');
+const throttle = require('lodash.throttle');
 
 const req = new Request({
   baseURL: 'http://localhost:8000'
 });
 
-req.use(useDebounce, 'debounce');
+let handler = throttle(() => {
+  console.log('throttle11');
+}, 1000);
 
-req.get('/a', {
-  debounce: {
-    time: 1000
-  }
-});
+handler();
+handler();
+handler();
+handler();
+// setTimeout(() => {
+//   handler();
+// }, 2000);
 
 req.interceptors.response.use(
   (res) => {
@@ -32,30 +38,15 @@ req.interceptors.response.use(
   }
 );
 
-// function bad() {
-//   let loading = false;
-//   function click() {
-//     if (loading) {
-//       return;
-//     }
-//     loading = true;
-//     req.get('/a').finally(() => {
-//       loading = false;
-//     });
-//   }
-//   click();
-//   click();
-// }
-
-// // bad();
-
-function better() {
+function debounce_example() {
   let loading = false;
   function click() {
     loading = true;
     req
       .get('/a', {
-        debounce: 1000
+        debounce: {
+          wait: 1000
+        }
       })
       .finally(() => {
         loading = false;
@@ -63,8 +54,34 @@ function better() {
   }
   click();
   click();
+  setTimeout(() => {
+    click();
+  }, 1000);
 }
 
-better();
+// req.use(useDebounce, 'debounce');
+// debounce_example();
 
-console.log('Date', new Date());
+function throttle_example() {
+  let loading = false;
+  function click() {
+    loading = true;
+    req
+      .get('/a', {
+        throttle: {
+          wait: 1000,
+          trailing: false
+        }
+      })
+      .finally(() => {
+        loading = false;
+      });
+  }
+  click();
+  click();
+  click();
+  click();
+}
+
+req.use(useThrottle, 'throttle');
+throttle_example();
