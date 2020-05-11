@@ -1,23 +1,12 @@
-const Request = require('../lib/core/index');
-const { useDebounce, useThrottle } = require('../lib/interceptors');
+const Ajax = require('../lib/core/index');
+const { useDebounce, useThrottle } = require('../lib/plugins');
 const debounce = require('lodash.debounce');
 const throttle = require('lodash.throttle');
+const request = require('supertest')('http://localhost:8000');
 
-const req = new Request({
+const req = new Ajax({
   baseURL: 'http://localhost:8000'
 });
-
-let handler = throttle(() => {
-  console.log('throttle11');
-}, 1000);
-
-handler();
-handler();
-handler();
-handler();
-// setTimeout(() => {
-//   handler();
-// }, 2000);
 
 req.interceptors.response.use(
   (res) => {
@@ -38,34 +27,53 @@ req.interceptors.response.use(
   }
 );
 
+function concurrency_example() {}
+
+// let handler = throttle(
+//   (r) => {
+//     console.log(r);
+//   },
+//   1000,
+//   {
+//     trailing: false
+//   }
+// );
+
+// handler(1);
+// handler(2);
+// handler(3);
+// handler(4);
+// setTimeout(() => {
+//   handler(5);
+// }, 2000);
+
 function debounce_example() {
-  let loading = false;
-  function click() {
-    loading = true;
+  function r(data) {
     req
       .get('/a', {
         debounce: {
-          wait: 1000
+          wait: 1000,
+          trailing: false // 取消尾部调用
         }
       })
-      .finally(() => {
-        loading = false;
+      .then((res) => {
+        console.log(data);
       });
   }
-  click();
-  click();
+  r(1);
+  r(2);
+  r(3);
   setTimeout(() => {
-    click();
-  }, 1000);
+    r(4);
+  }, 2000);
 }
+// req.addRequest(useDebounce, 'debounce');
+// req.get('/a', { debounce: 1000 });
 
-// req.use(useDebounce, 'debounce');
 // debounce_example();
 
 function throttle_example() {
-  let loading = false;
-  function click() {
-    loading = true;
+  function r(data) {
     req
       .get('/a', {
         throttle: {
@@ -73,15 +81,35 @@ function throttle_example() {
           trailing: false
         }
       })
-      .finally(() => {
-        loading = false;
+      .then((res) => {
+        console.log(data);
       });
   }
-  click();
-  click();
-  click();
-  click();
+  r(1);
+  r(2);
+  r(3);
+  setTimeout(() => {
+    r(4);
+  }, 2000);
 }
-
-req.use(useThrottle, 'throttle');
+req.addRequest(useThrottle, 'throttle');
 throttle_example();
+
+// function r(data) {
+//   req
+//     .get('/a', {
+//       throttle: {
+//         wait: 1000,
+//         trailing: false
+//       }
+//     })
+//     .then((res) => {
+//       console.log(data);
+//     });
+// }
+// r(1);
+// r(2);
+// r(3);
+// setTimeout(() => {
+//   r(4);
+// }, 2000);
